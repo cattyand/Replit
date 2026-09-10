@@ -1,0 +1,752 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: alarms
+    description: Alarm CRUD operations
+  - name: backups
+    description: Backup and restore operations
+  - name: profiles
+    description: Alarm profile management
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /alarms:
+    get:
+      operationId: listAlarms
+      tags: [alarms]
+      summary: List all alarms
+      responses:
+        "200":
+          description: List of alarms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Alarm"
+    post:
+      operationId: createAlarm
+      tags: [alarms]
+      summary: Create a new alarm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AlarmInput"
+      responses:
+        "201":
+          description: Alarm created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alarm"
+  /alarms/{id}:
+    get:
+      operationId: getAlarm
+      tags: [alarms]
+      summary: Get alarm by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Alarm details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alarm"
+    put:
+      operationId: updateAlarm
+      tags: [alarms]
+      summary: Update an alarm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AlarmInput"
+      responses:
+        "200":
+          description: Alarm updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alarm"
+    delete:
+      operationId: deleteAlarm
+      tags: [alarms]
+      summary: Delete an alarm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Alarm deleted
+  /alarms/{id}/skip:
+    post:
+      operationId: skipNextOccurrence
+      tags: [alarms]
+      summary: Skip next occurrence of alarm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Next occurrence skipped
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alarm"
+  /alarms/{id}/clone:
+    post:
+      operationId: cloneAlarm
+      tags: [alarms]
+      summary: Clone an alarm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                autoDelete:
+                  type: boolean
+                enabled:
+                  type: boolean
+                nameSuffix:
+                  type: string
+                alarmType:
+                  type: string
+                  enum: [once, specific_dates, weekly]
+      responses:
+        "201":
+          description: Alarm cloned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alarm"
+  /backups:
+    get:
+      operationId: listBackups
+      tags: [backups]
+      summary: List available backups
+      responses:
+        "200":
+          description: List of backups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Backup"
+    post:
+      operationId: createBackup
+      tags: [backups]
+      summary: Create a new backup
+      responses:
+        "201":
+          description: Backup created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Backup"
+  /backups/{id}:
+    delete:
+      operationId: deleteBackup
+      tags: [backups]
+      summary: Delete a backup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Backup deleted
+  /backups/{id}/restore:
+    post:
+      operationId: restoreBackup
+      tags: [backups]
+      summary: Restore alarms from a backup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Backup restored
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Alarm"
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [alarms]
+      summary: Get app settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+    put:
+      operationId: updateSettings
+      tags: [alarms]
+      summary: Update app settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsInput"
+      responses:
+        "200":
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+  /profiles:
+    get:
+      operationId: listProfiles
+      tags: [profiles]
+      summary: List all alarm profiles
+      responses:
+        "200":
+          description: Profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Profile"
+    post:
+      operationId: createProfile
+      tags: [profiles]
+      summary: Create an alarm profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "201":
+          description: Profile created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+  /profiles/{id}:
+    put:
+      operationId: updateProfile
+      tags: [profiles]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+    delete:
+      operationId: deleteProfile
+      tags: [profiles]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Profile deleted
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    Alarm:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        enabled:
+          type: boolean
+        hour:
+          type: integer
+        minute:
+          type: integer
+        alarmType:
+          type: string
+          enum: [once, specific_dates, weekly]
+        specificDates:
+          type: array
+          items:
+            type: string
+        weekDays:
+          type: array
+          items:
+            type: integer
+        autoDelete:
+          type: boolean
+        ringtone:
+          type: string
+        volume:
+          type: integer
+        gradualVolume:
+          type: integer
+        vibration:
+          type: string
+          enum: [off, on, only]
+        autoSnooze:
+          type: integer
+        maxSnoozes:
+          type: integer
+        skippedDates:
+          type: array
+          items:
+            type: string
+        personalTimeKey:
+          type: string
+          nullable: true
+        profileId:
+          type: integer
+          nullable: true
+        iconName:
+          type: string
+          default: alarm-clock
+        nextActivation:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - name
+        - enabled
+        - hour
+        - minute
+        - alarmType
+        - autoDelete
+        - ringtone
+        - volume
+        - gradualVolume
+        - vibration
+        - autoSnooze
+        - maxSnoozes
+        - createdAt
+        - updatedAt
+    AlarmInput:
+      type: object
+      properties:
+        name:
+          type: string
+        enabled:
+          type: boolean
+        hour:
+          type: integer
+        minute:
+          type: integer
+        alarmType:
+          type: string
+          enum: [once, specific_dates, weekly]
+        specificDates:
+          type: array
+          items:
+            type: string
+        weekDays:
+          type: array
+          items:
+            type: integer
+        autoDelete:
+          type: boolean
+        ringtone:
+          type: string
+        volume:
+          type: integer
+        gradualVolume:
+          type: integer
+        vibration:
+          type: string
+          enum: [off, on, only]
+        autoSnooze:
+          type: integer
+        maxSnoozes:
+          type: integer
+        skippedDates:
+          type: array
+          items:
+            type: string
+        personalTimeKey:
+          type: string
+          nullable: true
+        profileId:
+          type: integer
+          nullable: true
+        iconName:
+          type: string
+          default: alarm-clock
+      required:
+        - name
+        - enabled
+        - hour
+        - minute
+        - alarmType
+        - autoDelete
+        - ringtone
+        - volume
+        - gradualVolume
+        - vibration
+        - autoSnooze
+        - maxSnoozes
+         - iconName
+    Backup:
+      type: object
+      properties:
+        id:
+          type: integer
+        createdAt:
+          type: string
+        alarmCount:
+          type: integer
+      required:
+        - id
+        - createdAt
+        - alarmCount
+    Profile:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        isDefault:
+          type: boolean
+        autoDelete:
+          type: boolean
+          nullable: true
+        ringtone:
+          type: string
+          nullable: true
+        volume:
+          type: integer
+          nullable: true
+        gradualVolume:
+          type: integer
+          nullable: true
+        vibration:
+          type: string
+          enum: [off, on, only]
+          nullable: true
+        autoSnooze:
+          type: integer
+          nullable: true
+        maxSnoozes:
+          type: integer
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required: [id, name, createdAt, updatedAt]
+    ProfileInput:
+      type: object
+      properties:
+        name:
+          type: string
+        isDefault:
+          type: boolean
+          default: false
+        autoDelete:
+          type: boolean
+          nullable: true
+        ringtone:
+          type: string
+          nullable: true
+        volume:
+          type: integer
+          nullable: true
+        gradualVolume:
+          type: integer
+          nullable: true
+        vibration:
+          type: string
+          enum: [off, on, only]
+          nullable: true
+        autoSnooze:
+          type: integer
+          nullable: true
+        maxSnoozes:
+          type: integer
+          nullable: true
+      required: [name]
+    PersonalTime:
+      type: object
+      properties:
+        hour:
+          type: integer
+        minute:
+          type: integer
+      required:
+        - hour
+        - minute
+    Settings:
+      type: object
+      properties:
+        id:
+          type: integer
+        autoBackup:
+          type: boolean
+        backupHour:
+          type: integer
+        backupMinute:
+          type: integer
+        backupRetentionDays:
+          type: integer
+        wakeupHour:
+          type: integer
+          nullable: true
+        wakeupMinute:
+          type: integer
+          nullable: true
+        workStartHour:
+          type: integer
+          nullable: true
+        workStartMinute:
+          type: integer
+          nullable: true
+        lunchHour:
+          type: integer
+          nullable: true
+        lunchMinute:
+          type: integer
+          nullable: true
+        workEndHour:
+          type: integer
+          nullable: true
+        workEndMinute:
+          type: integer
+          nullable: true
+        dinnerHour:
+          type: integer
+          nullable: true
+        dinnerMinute:
+          type: integer
+          nullable: true
+        sleepHour:
+          type: integer
+          nullable: true
+        sleepMinute:
+          type: integer
+          nullable: true
+        languageCode:
+          type: string
+          nullable: true
+        sortOrder:
+          type: string
+          enum: [activation, name, personalTimes]
+        wakeupLabel:
+          type: string
+          nullable: true
+        workStartLabel:
+          type: string
+          nullable: true
+        lunchLabel:
+          type: string
+          nullable: true
+        workEndLabel:
+          type: string
+          nullable: true
+        dinnerLabel:
+          type: string
+          nullable: true
+        sleepLabel:
+          type: string
+          nullable: true
+        wakeupColor:
+          type: string
+          nullable: true
+        workStartColor:
+          type: string
+          nullable: true
+        lunchColor:
+          type: string
+          nullable: true
+        workEndColor:
+          type: string
+          nullable: true
+        dinnerColor:
+          type: string
+          nullable: true
+        sleepColor:
+          type: string
+          nullable: true
+      required:
+        - id
+        - autoBackup
+        - backupHour
+        - backupMinute
+        - backupRetentionDays
+        - sortOrder
+    SettingsInput:
+      type: object
+      properties:
+        autoBackup:
+          type: boolean
+        backupHour:
+          type: integer
+        backupMinute:
+          type: integer
+        backupRetentionDays:
+          type: integer
+        wakeupHour:
+          type: integer
+          nullable: true
+        wakeupMinute:
+          type: integer
+          nullable: true
+        workStartHour:
+          type: integer
+          nullable: true
+        workStartMinute:
+          type: integer
+          nullable: true
+        lunchHour:
+          type: integer
+          nullable: true
+        lunchMinute:
+          type: integer
+          nullable: true
+        workEndHour:
+          type: integer
+          nullable: true
+        workEndMinute:
+          type: integer
+          nullable: true
+        dinnerHour:
+          type: integer
+          nullable: true
+        dinnerMinute:
+          type: integer
+          nullable: true
+        sleepHour:
+          type: integer
+          nullable: true
+        sleepMinute:
+          type: integer
+          nullable: true
+        languageCode:
+          type: string
+          nullable: true
+        sortOrder:
+          type: string
+          enum: [activation, name, personalTimes]
+        wakeupLabel:
+          type: string
+          nullable: true
+        workStartLabel:
+          type: string
+          nullable: true
+        lunchLabel:
+          type: string
+          nullable: true
+        workEndLabel:
+          type: string
+          nullable: true
+        dinnerLabel:
+          type: string
+          nullable: true
+        sleepLabel:
+          type: string
+          nullable: true
+        wakeupColor:
+          type: string
+          nullable: true
+        workStartColor:
+          type: string
+          nullable: true
+        lunchColor:
+          type: string
+          nullable: true
+        workEndColor:
+          type: string
+          nullable: true
+        dinnerColor:
+          type: string
+          nullable: true
+        sleepColor:
+          type: string
+          nullable: true
+      required:
+        - autoBackup
+        - backupHour
+        - backupMinute
+        - backupRetentionDays

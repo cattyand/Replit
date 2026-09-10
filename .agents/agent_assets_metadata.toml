@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "SnaiTRaWovBmgPS8bMzE1"
+uri = "file://codice-sorgenti.zip"
+type = "unspecified"
+title = "Codice sorgente progetto"
+description = "Archivio ZIP leggero del progetto, senza node_modules e output di build, pronto per il download."
+logical_id = "81423117-c32a-4b27-91db-b8b51c8409ee"
+content_hash = "sha256:7a48792d4771bde674ff8b109f96dfbb7b9ca6675108cf6524a9b78d678673cd"
+size = 390575
+mtime_ms = 1788980543230
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:c9bf1fe5-8a97-4eab-9329-fda77c0a570e/81423117-c32a-4b27-91db-b8b51c8409ee/25e533e2-676b-465c-9326-22f96cd02327"
+storage_version_token = "1788980548005528"
+content_type = "application/octet-stream"
