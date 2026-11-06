@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Alarm Manager Mobile",
+    "slug": "alarm-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/alarm-manager-icon.png",
+    "scheme": "alarm-mobile",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE"
+      ],
+      "package": "com.alarmmanager.mobile"
+    },
+    "web": {
+      "favicon": "./assets/images/alarm-manager-icon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "defaultChannel": "alarm-manager",
+          "color": "#47c8eb",
+          "sounds": [
+            "./assets/sounds/classic.wav",
+            "./assets/sounds/bells.wav",
+            "./assets/sounds/morning.wav",
+            "./assets/sounds/digital.wav",
+            "./assets/sounds/nature.wav",
+            "./assets/sounds/rooster.wav",
+            "./assets/sounds/siren.wav",
+            "./assets/sounds/music-box.wav"
+          ]
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "recordAudioAndroid": false,
+          "enableBackgroundRecording": false,
+          "enableBackgroundPlayback": true
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
