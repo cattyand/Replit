@@ -6,7 +6,7 @@ export const RINGTONES = [
   { name: 'Natura', key: 'nature', file: 'nature.wav' },
   { name: 'Gallo', key: 'rooster', file: 'rooster.wav' },
   { name: 'Sirena dolce', key: 'siren', file: 'siren.wav' },
-  { name: 'Carillon', key: 'music-box', file: 'music-box.wav' },
+  { name: 'Carillon', key: 'music-box', file: 'music_box.wav' },
 ] as const;
 
 export const RINGTONE_ASSETS: Record<string, number> = {
@@ -17,7 +17,7 @@ export const RINGTONE_ASSETS: Record<string, number> = {
   nature: require('../assets/sounds/nature.wav'),
   rooster: require('../assets/sounds/rooster.wav'),
   siren: require('../assets/sounds/siren.wav'),
-  'music-box': require('../assets/sounds/music-box.wav'),
+  'music-box': require('../assets/sounds/music_box.wav'),
 };
 
 export function ringtoneForName(name: string) {

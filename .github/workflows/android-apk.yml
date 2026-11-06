@@ -43,7 +43,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Android project
-        run: pnpm --filter @workspace/alarm-mobile exec expo prebuild --platform android --no-install --non-interactive
+        run: pnpm --filter @workspace/alarm-mobile exec expo prebuild --platform android --no-install
+        env:
+          CI: '1'
 
       - name: Build debug APK
         working-directory: artifacts/alarm-mobile/android

@@ -37,7 +37,7 @@
             "./assets/sounds/nature.wav",
             "./assets/sounds/rooster.wav",
             "./assets/sounds/siren.wav",
-            "./assets/sounds/music-box.wav"
+            "./assets/sounds/music_box.wav"
           ]
         }
       ],

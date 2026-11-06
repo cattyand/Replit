@@ -61,6 +61,7 @@ function createTone({ notes, gap, shape }) {
 const outputDirectory = path.join(__dirname, '..', 'assets', 'sounds');
 fs.mkdirSync(outputDirectory, { recursive: true });
 for (const [name, definition] of Object.entries(definitions)) {
-  fs.writeFileSync(path.join(outputDirectory, `${name}.wav`), createTone(definition));
+  const fileName = name.replaceAll('-', '_');
+  fs.writeFileSync(path.join(outputDirectory, `${fileName}.wav`), createTone(definition));
 }
 console.log(`Created ${Object.keys(definitions).length} short local alarm tones.`);
